@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Карта с кастомной иконкой</title>
+    <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU" type="text/javascript"></script>
+    <script>
+        ymaps.ready(init);
+    
+        function init() {
+            var myMap = new ymaps.Map("map", {
+                center: [40.301963, 69.614320], // Москва по умолчанию
+                zoom: 14
+            });
+    
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    function(position) {
+                        var userCoords = [position.coords.latitude, position.coords.longitude];
+                        var accuracy = position.coords.accuracy; // Радиус точности
+    
+                        myMap.setCenter(userCoords, 16); 
+    
+                        var myPlacemark = new ymaps.Placemark(
+                            userCoords,
+                            {
+                                hintContent: "Вы здесь!",
+                                balloonContent: `Ваше местоположение (±${accuracy.toFixed(2)} м)`
+                            },
+                            {
+                                iconLayout: 'default#image',
+                                iconImageHref: 'https://w7.pngwing.com/pngs/173/464/png-transparent-pokemon-ball-pokeball-area-wiki-technology-thumbnail.png',
+                                iconImageSize: [30, 30],
+                                iconImageOffset: [-15, -15]
+                            }
+                        );
+    
+                        myMap.geoObjects.add(myPlacemark);
+                    },
+                    function() {
+                        alert("Не удалось получить геолокацию.");
+                    },
+                    {
+                        enableHighAccuracy: true, // Запрос высокой точности
+                        timeout: 10000, // Максимальное время ожидания (мс)
+                        maximumAge: 0 // Не использовать кэшированные данные
+                    }
+                );
+            } else {
+                alert("Ваш браузер не поддерживает геолокацию.");
+            }
+        }
+    </script>
+    
+</head>
+<body>
+    <div id="map" style="width: 100%; height: 500px;"></div>
+</body>
+</html>
+
